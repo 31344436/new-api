@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 
 import React, { useState, useEffect } from 'react';
-import { Modal, Tabs, TabPane, Button, Spin } from '@douyinfe/semi-ui';
+import { Modal, Tabs, TabPane, Button, Spin, Banner } from '@douyinfe/semi-ui';
 import { IconCopy } from '@douyinfe/semi-icons';
 import { useTranslation } from 'react-i18next';
 import { copy, showSuccess, showError } from '../../../../helpers';
@@ -111,6 +111,30 @@ export default function UseKeyModal({ visible, onCancel, record }) {
       .finally(() => setLoading(false));
   }, [visible, record?.id]);
 
+  // ── Codex CLI ──────────────────────────────────────────────
+  const codexConfigToml = [
+    `model_provider = "OpenAI"`,
+    `model = "gpt-5.4"`,
+    `review_model = "gpt-5.4"`,
+    `model_reasoning_effort = "medium"`,
+    `disable_response_storage = true`,
+    `network_access = "enabled"`,
+    `windows_wsl_setup_acknowledged = true`,
+    `model_context_window = 1000000`,
+    `model_auto_compact_token_limit = 900000`,
+    ``,
+    `[model_providers.OpenAI]`,
+    `name = "OpenAI"`,
+    `base_url = "${baseUrl}"`,
+    `wire_api = "responses"`,
+    `requires_openai_auth = true`,
+  ].join('\n');
+
+  const codexAuthJson = JSON.stringify({ OPENAI_API_KEY: apiKey }, null, 2);
+
+  const codexConfigTomlWin = codexConfigToml; // 内容相同，路径不同
+
+  // ── Claude Code ────────────────────────────────────────────
   const macLinuxTerminal = [
     `export ANTHROPIC_BASE_URL="${baseUrl}"`,
     `export ANTHROPIC_AUTH_TOKEN="${apiKey}"`,
@@ -147,7 +171,7 @@ export default function UseKeyModal({ visible, onCancel, record }) {
       visible={visible}
       onCancel={onCancel}
       footer={<Button onClick={onCancel}>{t('关闭')}</Button>}
-      width={640}
+      width={660}
     >
       {loading ? (
         <div style={{ textAlign: 'center', padding: 32 }}>
@@ -155,42 +179,69 @@ export default function UseKeyModal({ visible, onCancel, record }) {
         </div>
       ) : (
         <Tabs type='line'>
+          {/* ── Codex CLI tab ── */}
+          <TabPane tab='Codex CLI' itemKey='codex-cli'>
+            <p style={{ color: 'var(--semi-color-text-2)', marginBottom: 12, fontSize: 13 }}>
+              {t('将以下配置文件添加到 Codex CLI 配置目录中。')}
+            </p>
+            <Tabs type='button'>
+              <TabPane tab='macOS / Linux' itemKey='mac'>
+                <div style={{ marginTop: 12 }}>
+                  <Banner
+                    type='warning'
+                    description={t('请确保以下内容位于 config.toml 文件的开头部分')}
+                    style={{ marginBottom: 12, borderRadius: 6 }}
+                  />
+                  <CodeBlock filename='~/.codex/config.toml' code={codexConfigToml} />
+                  <CodeBlock filename='~/.codex/auth.json' code={codexAuthJson} />
+                  <Banner
+                    type='info'
+                    description={t('请确保配置目录存在。macOS/Linux 用户可运行 mkdir -p ~/.codex 创建目录。')}
+                    style={{ marginTop: 4, borderRadius: 6 }}
+                  />
+                </div>
+              </TabPane>
+              <TabPane tab='Windows' itemKey='win'>
+                <div style={{ marginTop: 12 }}>
+                  <Banner
+                    type='warning'
+                    description={t('请确保以下内容位于 config.toml 文件的开头部分')}
+                    style={{ marginBottom: 12, borderRadius: 6 }}
+                  />
+                  <CodeBlock filename='%USERPROFILE%\\.codex\\config.toml' code={codexConfigTomlWin} />
+                  <CodeBlock filename='%USERPROFILE%\\.codex\\auth.json' code={codexAuthJson} />
+                  <Banner
+                    type='info'
+                    description={t('请确保配置目录存在。Windows 用户可运行 mkdir %USERPROFILE%\\.codex 创建目录。')}
+                    style={{ marginTop: 4, borderRadius: 6 }}
+                  />
+                </div>
+              </TabPane>
+            </Tabs>
+          </TabPane>
+
+          {/* ── Claude Code tab ── */}
           <TabPane tab='Claude Code' itemKey='claude-code'>
-            <p
-              style={{
-                color: 'var(--semi-color-text-2)',
-                marginBottom: 12,
-                fontSize: 13,
-              }}
-            >
+            <p style={{ color: 'var(--semi-color-text-2)', marginBottom: 12, fontSize: 13 }}>
               {t('将以下环境变量添加到您的终端配置文件或直接在终端中运行。')}
             </p>
             <Tabs type='button'>
               <TabPane tab='macOS / Linux' itemKey='mac'>
                 <div style={{ marginTop: 12 }}>
                   <CodeBlock filename='Terminal' code={macLinuxTerminal} />
-                  <CodeBlock
-                    filename='~/.claude/settings.json'
-                    code={vscodeSettings}
-                  />
+                  <CodeBlock filename='~/.claude/settings.json' code={vscodeSettings} />
                 </div>
               </TabPane>
               <TabPane tab='Windows CMD' itemKey='cmd'>
                 <div style={{ marginTop: 12 }}>
                   <CodeBlock code={windowsCmd} />
-                  <CodeBlock
-                    filename='~/.claude/settings.json'
-                    code={vscodeSettings}
-                  />
+                  <CodeBlock filename='~/.claude/settings.json' code={vscodeSettings} />
                 </div>
               </TabPane>
               <TabPane tab='PowerShell' itemKey='ps'>
                 <div style={{ marginTop: 12 }}>
                   <CodeBlock code={powershell} />
-                  <CodeBlock
-                    filename='~/.claude/settings.json'
-                    code={vscodeSettings}
-                  />
+                  <CodeBlock filename='~/.claude/settings.json' code={vscodeSettings} />
                 </div>
               </TabPane>
             </Tabs>
