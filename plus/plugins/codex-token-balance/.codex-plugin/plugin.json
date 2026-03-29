@@ -1,0 +1,42 @@
+{
+  "name": "codex-token-balance",
+  "version": "0.1.0",
+  "description": "Adds Codex commands that summarize local token usage, session totals, observed plan metadata, and any rate-limit fields exposed by the CLI.",
+  "author": {
+    "name": "Local Workspace",
+    "email": "noreply@example.com",
+    "url": "https://openai.com/codex"
+  },
+  "homepage": "https://developers.openai.com/codex",
+  "repository": "https://github.com/openai/codex",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "tokens",
+    "usage",
+    "balance",
+    "cli"
+  ],
+  "interface": {
+    "displayName": "Codex Token Balance",
+    "shortDescription": "Inspect local Codex token usage and visible quota metadata",
+    "longDescription": "Adds slash-command style workflows and a local reporting script that parse ~/.codex session logs plus auth metadata to show per-session totals, recent usage, model breakdowns, and any rate-limit or credit fields that Codex exposes locally.",
+    "developerName": "Local Workspace",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive"
+    ],
+    "websiteURL": "https://developers.openai.com/codex",
+    "privacyPolicyURL": "https://openai.com/policies/privacy-policy/",
+    "termsOfServiceURL": "https://openai.com/policies/terms-of-use/",
+    "defaultPrompt": [
+      "Show my recent Codex token usage and the latest visible quota fields",
+      "Break down Codex token usage by model across recent sessions",
+      "Explain which parts of Codex token balance are unavailable locally"
+    ],
+    "brandColor": "#1F7A8C",
+    "composerIcon": "./assets/token-balance-small.svg",
+    "logo": "./assets/token-balance-logo.svg",
+    "screenshots": []
+  }
+}
